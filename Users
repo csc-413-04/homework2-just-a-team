@@ -1,0 +1,77 @@
+using System;
+
+using System.Data.Entity;
+
+using System.Data.Entity.Infrastructure;
+
+using System.Data.Entity.Core.Objects;
+
+using System.Linq;
+
+public class NotesController : ApiController{
+
+  
+
+//Add the data to the note object
+
+Note[] notes = new Note[]{
+
+new Note{ id = 1, body = "Ask Larry About TPS Reports"},
+
+new Note{ id = 2, body = "Ask Jhon About WFH Reports"}
+
+}
+
+};
+
+[HttpGet]
+
+public IEnumerable<Employee> notes(){
+
+return notes; // Return the list of the Notes
+
+}
+
+[HttpPost]
+
+public string notes(Notes objNotes)
+
+{
+
+//create DBContext object
+
+using (var dbCtx = new NotesDBEntities())
+
+{
+
+//Add Notes object into Notes DBset
+
+dbCtx.Notes.Add(objNotes);
+
+  
+
+// call SaveChanges method to save note into database
+
+dbCtx.SaveChanges();
+
+}
+
+}
+
+[HttpGet]
+
+public IHttpActionResult notes(int id){
+
+var note = notes.FirstOrDefault((p) => p.id == id); // Retrive the particular record from the notes list
+
+if (note == null){
+
+return NotFound();
+
+}
+
+return Ok(note);
+
+}
+
+}
