@@ -12,7 +12,6 @@ import com.sun.org.apache.xpath.internal.functions.FuncFalse;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import java.sql.Timestamp;
 
 public class mongodbFunc {
@@ -21,6 +20,7 @@ public class mongodbFunc {
     DB db = mongo.getDB("REST2");
     DBCollection users = db.getCollection("users");
     DBCollection auth = db.getCollection("auth");
+    DBCollection flist = db.getCollection("friendlist");
 
     public boolean create_new_user(String username, String password) {
         System.out.println("input: " + username + " " + password);
@@ -97,6 +97,8 @@ public class mongodbFunc {
 
     public void add_token(String username, String token) {
         BasicDBObject data = new BasicDBObject();
+        data.append("user", username);
+        data.append("token", token);
         BasicDBObject searchQueryUser = new BasicDBObject().append("user", username);
         auth.update(searchQueryUser, data);
         System.out.println("updated new token");
@@ -104,6 +106,21 @@ public class mongodbFunc {
 
     public boolean addfriend_check(String token){
         boolean check_token_existed = false;
+        BasicDBObject whereQuery = new BasicDBObject();
+        whereQuery.put("token", token);
+        DBCursor cursor = auth.find(whereQuery);
+        while (cursor.hasNext()) {
+            check_token_existed = true;
+            System.out.print("token valid");
+            break;
+        }
+
+        if(check_token_existed == true){
+
+
+        }
+
+
 
         return check_token_existed;
     }

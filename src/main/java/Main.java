@@ -1,17 +1,5 @@
 package main.java;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
-import com.mongodb.Mongo;
-import com.mongodb.MongoException;
-
-//import java.security.Timestamp;
-import java.net.UnknownHostException;
-import java.sql.Timestamp;
-
 import static spark.Spark.*;
 
 public class Main {
