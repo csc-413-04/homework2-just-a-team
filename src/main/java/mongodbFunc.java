@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 
 public class mongodbFunc {
 
@@ -35,6 +36,7 @@ public class mongodbFunc {
         while (cursor.hasNext()) {
             //System.out.println(cursor.next());
             check_dublicate_username = true;
+            break;
         }
 
         if (check_dublicate_username == false) {
@@ -55,7 +57,14 @@ public class mongodbFunc {
             data2.append("token", token);
             list2.add(data2);
             auth.insert(list2);
-            System.out.println(token);
+            System.out.println("token created: " + token);
+
+            //set up database friendlist
+            ArrayList listfriend = new ArrayList();
+            BasicDBObject doc = new BasicDBObject("user", username).append("friends", listfriend);
+            flist.insert(doc);
+            System.out.println("friend list created: ");
+
         } else {
             System.out.println("dublicate user");
         }
@@ -91,7 +100,9 @@ public class mongodbFunc {
 
     public String get_token(String username) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        String new_token = username + timestamp.getTime();
+        String new_token = "" + timestamp.getTime();
+        //new_token = new_token.replace("-","").replace(" ", "").replace(":", "").replace(".","");
+        new_token = new_token.substring(0,8); 
         return new_token;
     }
 
@@ -101,22 +112,25 @@ public class mongodbFunc {
         data.append("token", token);
         BasicDBObject searchQueryUser = new BasicDBObject().append("user", username);
         auth.update(searchQueryUser, data);
+        System.out.println("Token:" + token);
         System.out.println("updated new token");
     }
 
-    public boolean addfriend_check(String token){
+    public boolean addfriend_check(String token, String friend){
+        System.out.println("input: " + token + " " + friend);
         boolean check_token_existed = false;
         BasicDBObject whereQuery = new BasicDBObject();
         whereQuery.put("token", token);
         DBCursor cursor = auth.find(whereQuery);
+        String str = null;
         while (cursor.hasNext()) {
             check_token_existed = true;
-            System.out.print("token valid");
-            break;
+            str=cursor.curr().get("user").toString();
         }
 
         if(check_token_existed == true){
-
+            System.out.print("token valid");
+            System.out.println(str);
 
         }
 

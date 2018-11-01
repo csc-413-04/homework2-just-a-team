@@ -29,7 +29,7 @@ public class Main {
             if (check == true)
                 return "ok";
             else
-                return "login fail";
+                return "create fail";
 
         });
 
@@ -37,7 +37,10 @@ public class Main {
             String username = request.queryParams("username");
             String password = request.queryParams("password");
 
-            boolean check = mg.login_check(username, password);
+            boolean check = false;
+            if(username != null && password != null) {
+                check = mg.login_check(username, password);
+            }
 
             if (check == true){
                 String token = mg.get_token(username);
@@ -48,27 +51,28 @@ public class Main {
                 return "login_fail";
         });
 
-        ///addfriend?token=<token>&friend=<freindsuserid>
-        get("/addfriend", ((request, response) -> {
+        //addfriend?token=<token>&friend=<freindsuserid>
+        get("/addfriend", (request, response) -> {
             String token = request.queryParams("token");
             String friend = request.queryParams("friend");
             boolean check_token = false;
 
-            check_token = mg.addfriend_check(token);
-
+            if(token != null && friend != null) {
+                check_token = mg.addfriend_check(token, friend);
+            }
             if(check_token == false){
                 return "failed_authentication";
             }else{
                 return "ok";
             }
 
-        }));
+        });
 
 
-        get("/showdb", ((request, response) -> {
+        get("/showdb", (request, response) -> {
 
             return mg.show_db();
-        }));
+        });
         
     }
 }
