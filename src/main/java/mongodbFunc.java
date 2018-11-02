@@ -6,15 +6,11 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.Mongo;
-import com.mongodb.MongoException;
-import com.sun.org.apache.xpath.internal.functions.FuncFalse;
 
-import javax.swing.text.Document;
 import java.util.ArrayList;
 import java.util.List;
 
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 
 public class mongodbFunc {
 
