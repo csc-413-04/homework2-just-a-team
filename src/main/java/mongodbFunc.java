@@ -34,7 +34,7 @@ public class mongodbFunc {
 
         boolean check_dublicate_username = false;
         while (cursor.hasNext()) {
-            //System.out.println(cursor.next());
+            System.out.println(cursor.next());
             check_dublicate_username = true;
             break;
         }
@@ -64,7 +64,6 @@ public class mongodbFunc {
             BasicDBObject doc = new BasicDBObject("user", username).append("friends", listfriend);
             flist.insert(doc);
             System.out.println("friend list created: ");
-
         } else {
             System.out.println("dublicate user");
         }
@@ -89,7 +88,7 @@ public class mongodbFunc {
 
         DBCursor cursor = users.find(andQuery);
         while (cursor.hasNext()) {
-            //System.out.println(cursor7.next());
+            System.out.println(cursor.next());
             check_login = true;
             break;
         }
@@ -102,7 +101,7 @@ public class mongodbFunc {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         String new_token = "" + timestamp.getTime();
         //new_token = new_token.replace("-","").replace(" ", "").replace(":", "").replace(".","");
-        new_token = new_token.substring(0,8); 
+        new_token = new_token.substring(0,8);
         return new_token;
     }
 
@@ -117,26 +116,75 @@ public class mongodbFunc {
     }
 
     public boolean addfriend_check(String token, String friend){
+        String notify = "token not existed";
         System.out.println("input: " + token + " " + friend);
         boolean check_token_existed = false;
         BasicDBObject whereQuery = new BasicDBObject();
         whereQuery.put("token", token);
         DBCursor cursor = auth.find(whereQuery);
-        String str = null;
+        String username = null;
         while (cursor.hasNext()) {
+            cursor.next();
+            //System.out.println(cursor.next());
             check_token_existed = true;
-            str=cursor.curr().get("user").toString();
+            notify = "token existed";
+            username=cursor.curr().get("user").toString();
         }
 
         if(check_token_existed == true){
-            System.out.print("token valid");
-            System.out.println(str);
+            System.out.println("token valid");
+            System.out.println(username);
+
+            //System.out.println(check_value(flist,"user", username));
+            //System.out.println(check_value(flist,"friends", friend));
+            if( check_value(users,"user", username) == true){
+                if (check_value(flist,"friends", friend) == false){
+                    BasicDBObject searchObject = new BasicDBObject().append("user", username);
+                    DBObject modifiedObject =new BasicDBObject();
+                    modifiedObject.put("$push", new BasicDBObject().append("friends", friend));
+                    flist.update(searchObject, modifiedObject);
+                    notify = "friend existed";
+                    //printdb(flist);
+                }else
+                    notify = "friend existed";
+            }else{
+                notify = "username from token not existed";
+            }
+
+            //check friend valid
+            /*
+            BasicDBObject searchObject = new BasicDBObject().append("user", username);
+            DBObject modifiedObject =new BasicDBObject();
+            modifiedObject.put("$push", new BasicDBObject().append("friends", friend));
+            flist.update(searchObject, modifiedObject);
+            */
+
 
         }
 
 
-
+        System.out.println(notify);
         return check_token_existed;
+    }
+
+    public boolean friend(String token){
+        boolean check_token_existed = false;
+
+        return true;
+    }
+
+    public boolean check_value(DBCollection collection, String key, String value){
+        boolean check_value_existed = false;
+        BasicDBObject whereQuery = new BasicDBObject();
+        whereQuery.put(key, value);
+        DBCursor cursor = collection.find(whereQuery);
+        while (cursor.hasNext()) {
+            cursor.next();
+            //System.out.println(cursor.next());
+            check_value_existed = true;
+        }
+
+        return check_value_existed;
     }
 
     public String show_db() {
@@ -149,6 +197,19 @@ public class mongodbFunc {
             allDB = allDB + cursor.next();
         }
         return allDB;
+    }
+
+    public void printdb(DBCollection collection){
+        String allDB = "";
+
+        DBCursor cursor = collection.find();
+        while (cursor.hasNext()) {
+            //cursor.next();
+            System.out.println(cursor.next());
+            allDB = allDB + cursor.next();
+        }
+
+        System.out.println(allDB);
     }
 
 }
