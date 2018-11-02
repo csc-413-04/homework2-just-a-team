@@ -1,5 +1,7 @@
 package main.java;
 
+import java.util.List;
+
 import static spark.Spark.*;
 
 public class Main {
@@ -68,6 +70,11 @@ public class Main {
 
         });
 
+        //friends?token=<token>
+        get("/friend", (request, response) -> {
+            String token = request.queryParams("token");
+            return mg.show_friend_list(token);
+        });
 
         get("/showdb", (request, response) -> {
 
